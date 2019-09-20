@@ -1,13 +1,18 @@
-# player
-PLAYERSPEED = 10
+TITLE = "Hello"
+WIDTH = 600
+HEIGHT = 600
+FPS = 60
 
-# colours
+# define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
-# general things (game window, etc)
-SCREENWIDTH = 600
-SCREENHEIGHT = 600
-GAMESIZE = 300
-FPS = 40
+# player
+SPEED = 5
+
+# enemy
+MAXATTACK = 50

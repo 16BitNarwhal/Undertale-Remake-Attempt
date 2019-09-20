@@ -1,34 +1,98 @@
-import pygame
+import pygame as pg
+import random
+import time
+from settings import *
+from sprites import *
 
-import settings as s
-import player
+class Game:
+    def __init__(self):
+        # initialize game window, etc
+        pg.init()
+        pg.mixer.init()
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(TITLE)
+        self.clock = pg.time.Clock()
+        self.running = True
 
-# initialize pygame
-pygame.init()
-pygame.mixer.init()
-screen = pygame.display.set_mode((s.SCREENWIDTH, s.SCREENHEIGHT))
-pygame.display.set_caption("Undersea")
-clock = pygame.time.Clock()
+    def new(self):
+        # start a new game
+        self.all_sprites = pg.sprite.Group()
+        self.attacks = pg.sprite.Group()
+        self.player = Player()
+        self.all_sprites.add(self.player)
 
-# game loop
-running = True
-while running:
-    # keep loop running at same speed
-    clock.tick(s.FPS)
+        self.font = pg.font.Font('freesansbold.ttf', 32)
+        self.text = self.font.render(str(self.player.rect.x) + " " + str(self.player.rect.y), True, WHITE)
+        self.textRect = self.text.get_rect()
+        self.textRect.center = (WIDTH // 2, HEIGHT // 2)
 
-    # process input (events)
-    for event in pygame.event.get():
-        # check for closing window
-        if event.type == pygame.QUIT:
-            running = False
+        self.startTime = time.time()
 
-    # update
-    pygame.display.update()
+        self.run()
 
-    # draw/render
-    screen.fill(s.BLACK)
-    # *after* drawing everything, flip the display
-    pygame.display.flip()
+    def run(self):
+        # Game Loop
+        self.playing = True
+        while self.playing:
+            self.clock.tick(FPS)
+            self.events()
+            self.update()
+            self.draw()
 
-pygame.quit()
-quit()
+    def update(self):
+        # Game Loop - Update
+        self.all_sprites.update()
+        self.attacks.update()
+        self.text = self.font.render(str(self.player.rect.x) + " " + str(self.player.rect.y), True, WHITE)
+
+        # elapsed time 0.5 s to add new attack
+        self.elapsedTime = time.time() - self.startTime
+        if self.elapsedTime >= 1:
+            # initialize attack
+            self.newAttack = EnemyAttack()
+            self.newAttack.rect.x = random.randint(0, WIDTH-MAXATTACK)
+            self.newAttack.rect.y = random.randint(0, HEIGHT-MAXATTACK)
+            self.all_sprites.add(self.newAttack)
+            self.attacks.add(self.newAttack)
+
+        for attack in self.attacks:
+            if attack == pg.sprite.collide_rect(attack, self.player):
+                self.playing = False
+                self.running = False
+
+            if attack.size >= MAXATTACK:
+                self.attacks.remove(attack)
+                self.all_sprites.remove(attack)
+
+    def events(self):
+        # Game Loop - events
+        for event in pg.event.get():
+            # check for closing window
+            if event.type == pg.QUIT:
+                if self.playing:
+                    self.playing = False
+                self.running = False
+
+    def draw(self):
+        # Game Loop - draw
+        self.screen.fill(BLACK)
+        self.screen.blit(self.text, self.textRect) 
+        self.all_sprites.draw(self.screen)
+        # *after* drawing everything, flip the display
+        pg.display.flip()
+
+    def show_start_screen(self):
+        # game splash/start screen
+        pass
+
+    def show_go_screen(self):
+        # game over/continue
+        pass
+
+g = Game()
+g.show_start_screen()
+while g.running:
+    g.new()
+    g.show_go_screen()
+
+pg.quit()
