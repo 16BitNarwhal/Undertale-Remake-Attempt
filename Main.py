@@ -80,12 +80,12 @@ class Game:
         self.screen.fill(BLACK)
         self.screen.blit(self.text, self.textRect) 
         self.all_sprites.draw(self.screen)
+
         # *after* drawing everything, flip the display
         pg.display.flip()
 
     def show_start_screen(self):
         # game splash/start screen
-        
         pass
 
     def show_go_screen(self):

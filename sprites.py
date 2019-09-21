@@ -26,10 +26,10 @@ class EnemyAttack(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pg.Surface([5, 5])
+        self.image = pg.Surface([10, 10])
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
 
     def update(self):
-        self.rect.inflate_ip(-3, 0)
+        self.rect.inflate_ip(3, 3)
         self.image.fill(WHITE)
