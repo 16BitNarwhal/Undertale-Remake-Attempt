@@ -47,7 +47,9 @@ class Game:
 
         # elapsed time 0.5 s to add new attack
         self.elapsedTime = time.time() - self.startTime
-        if self.elapsedTime >= 1:
+        if self.elapsedTime >= random.random():
+            self.startTime = time.time()
+
             # initialize attack
             self.newAttack = EnemyAttack()
             self.newAttack.rect.x = random.randint(0, WIDTH-MAXATTACK)
@@ -56,11 +58,11 @@ class Game:
             self.attacks.add(self.newAttack)
 
         for attack in self.attacks:
-            if attack == pg.sprite.collide_rect(attack, self.player):
+            if attack.rect.colliderect(self.player.rect):
                 self.playing = False
                 self.running = False
 
-            if attack.size >= MAXATTACK:
+            if attack.image.get_rect().x <= WIDTH/2:
                 self.attacks.remove(attack)
                 self.all_sprites.remove(attack)
 
@@ -83,6 +85,7 @@ class Game:
 
     def show_start_screen(self):
         # game splash/start screen
+        
         pass
 
     def show_go_screen(self):
