@@ -1,7 +1,9 @@
+# game options, etc.
 TITLE = "Hello"
 WIDTH = 600
 HEIGHT = 600
 FPS = 60
+SPRITESHEET = "test.png"
 
 # define colors
 WHITE = (255, 255, 255)
@@ -15,4 +17,4 @@ YELLOW = (255, 255, 0)
 SPEED = 5
 
 # enemy
-MAXATTACK = 50
+MAXSIZE = 20

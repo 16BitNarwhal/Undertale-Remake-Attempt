@@ -3,6 +3,7 @@ import random
 import time
 from settings import *
 from sprites import *
+from os import path
 
 class Game:
     def __init__(self):
@@ -33,6 +34,7 @@ class Game:
     def run(self):
         # Game Loop
         self.playing = True
+        self.load_data()
         while self.playing:
             self.clock.tick(FPS)
             self.events()
@@ -51,9 +53,9 @@ class Game:
             self.startTime = time.time()
 
             # initialize attack
-            self.newAttack = EnemyAttack()
-            self.newAttack.rect.x = random.randint(0, WIDTH-MAXATTACK)
-            self.newAttack.rect.y = random.randint(0, HEIGHT-MAXATTACK)
+            self.newAttack = EnemyAttack(self.spritesheet)
+            self.newAttack.rect.x = random.randint(0, WIDTH-MAXSIZE)
+            self.newAttack.rect.y = random.randint(0, HEIGHT-MAXSIZE)
             self.all_sprites.add(self.newAttack)
             self.attacks.add(self.newAttack)
 
@@ -62,7 +64,7 @@ class Game:
                 self.playing = False
                 self.running = False
 
-            if attack.image.get_rect().x <= WIDTH/2:
+            if attack.change <= MAXSIZE:
                 self.attacks.remove(attack)
                 self.all_sprites.remove(attack)
 
@@ -78,7 +80,7 @@ class Game:
     def draw(self):
         # Game Loop - draw
         self.screen.fill(BLACK)
-        self.screen.blit(self.text, self.textRect) 
+        self.screen.blit(self.text, self.textRect)
         self.all_sprites.draw(self.screen)
 
         # *after* drawing everything, flip the display
@@ -91,6 +93,12 @@ class Game:
     def show_go_screen(self):
         # game over/continue
         pass
+
+    def load_data(self):
+        # load spritesheet image
+        self.dir = path.dirname(__file__)
+        img_dir = path.join(self.dir, '')
+        self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
 
 g = Game()
 g.show_start_screen()

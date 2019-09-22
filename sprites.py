@@ -2,6 +2,17 @@
 import pygame as pg
 from settings import *
 
+class Spritesheet:
+    # utility class for loading and parsing spritesheets
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        # grab on image out of a larger spritesheet
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        return image
+
 class Player(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
@@ -20,16 +31,15 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_DOWN] and self.rect.y <= HEIGHT - 25 - SPEED:
             self.rect.y += SPEED
 
-
-
 class EnemyAttack(pg.sprite.Sprite):
-    def __init__(self):
+
+    def __init__(self, spritesheet):
         super().__init__()
 
-        self.image = pg.Surface([10, 10])
-        self.image.fill(WHITE)
+        self.image = spritesheet.get_image(178, 16, 48, 16)
         self.rect = self.image.get_rect()
+        self.change = 0
 
     def update(self):
-        self.rect.inflate_ip(3, 3)
-        self.image.fill(WHITE)
+        change += 1
+        pg.transform.scale(self.image, (self.rect.x + change, self.rect.y + change))
