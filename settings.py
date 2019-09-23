@@ -14,7 +14,7 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
 # player
-SPEED = 5
+PLAYERSPEED = 5
+HEALTH = 100
 
 # enemy
-MAXATTACK = 20
