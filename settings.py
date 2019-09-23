@@ -1,9 +1,14 @@
 # game options, etc.
 TITLE = "Hello"
-WIDTH = 600
+WIDTH = 800
 HEIGHT = 600
 FPS = 60
 SPRITESHEET = "test.png"
+GAMEWIDTH = 200
+GAMEHEIGHT = 200
+HDISTANCE = (WIDTH-GAMEWIDTH) / 2
+VDISTANCE = (HEIGHT-GAMEWIDTH) / 2
+DIRECTIONS = ['goUP', 'goDOWN', 'goRIGHT', 'goLEFT']
 
 # define colors
 WHITE = (255, 255, 255)
