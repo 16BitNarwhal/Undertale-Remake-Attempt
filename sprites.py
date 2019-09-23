@@ -45,10 +45,10 @@ class EnemyAttack(pg.sprite.Sprite):
 
     def update(self):
         if self.direction == 'goUP':
-            self.rect.y += self.speed
+            self.rect.y -= self.speed
         
         elif self.direction == 'goDOWN':
-            self.rect.y -= self.speed
+            self.rect.y += self.speed
 
         elif self.direction == 'goRIGHT':
             self.rect.x += self.speed

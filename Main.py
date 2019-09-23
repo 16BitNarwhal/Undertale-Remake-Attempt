@@ -54,7 +54,7 @@ class Game:
 
         # elapsed time 0.5 s to add new attack
         self.elapsedTime = time.time() - self.startTime
-        if self.elapsedTime >= random.random()*2.5:
+        if self.elapsedTime >= random.random()*5.0:
             self.startTime = time.time()
             
             # initialize attack
@@ -82,9 +82,9 @@ class Game:
                 self.attacks.remove(attack)
                 self.all_sprites.remove(attack)
 
-#                if self.player.health <= 0:
-#                    self.playing = False
-#                    self.running = False
+                if self.player.health <= 0:
+                    self.playing = False
+                    self.running = False
 
             if (attack.direction == 'goLEFT' and attack.rect.x <= 0) or (attack.direction == 'goRIGHT' and attack.rect.x >= WIDTH) or (attack.direction == 'goUP' and attack.rect.y <= 0) or (attack.direction == 'goDOWN' and attack.rect.y >= HEIGHT):
                 self.attacks.remove(attack)
