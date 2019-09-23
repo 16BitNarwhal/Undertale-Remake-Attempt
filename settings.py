@@ -17,4 +17,4 @@ YELLOW = (255, 255, 0)
 SPEED = 5
 
 # enemy
-MAXSIZE = 20
+MAXATTACK = 20
