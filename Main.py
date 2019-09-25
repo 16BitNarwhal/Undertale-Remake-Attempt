@@ -4,6 +4,7 @@ import time
 from settings import *
 from sprites import *
 import os
+import math
 
 class Game:
     def __init__(self):
@@ -13,7 +14,9 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
+        self.timer = time.time()
         self.running = True
+        self.highscoreColour = WHITE
 
     def new(self):
         # start a new game
@@ -23,13 +26,15 @@ class Game:
         self.player = Player(self.heart)
         self.all_sprites.add(self.player)
 
+        self.healthBar = HealthBar()
+
         self.border = Border(self.border)
         self.all_sprites.add(self.border)
 
-        self.font = pg.font.Font('freesansbold.ttf', 32)
-        self.text = self.font.render(str(self.player.health), True, WHITE)
-        self.textRect = self.text.get_rect()
-        self.textRect.center = (WIDTH // 2, HEIGHT // 2)
+        # self.font = pg.font.Font('freesansbold.ttf', 32)
+        # self.timeText = self.font.render("Time: " + str(math.floor(time.time() - self.timer)), True, WHITE)
+        # self.timeTextRect = self.text.get_rect()
+        # self.timeTextRect.center = (100, 100)
 
         self.startTime = time.time()
 
@@ -49,8 +54,15 @@ class Game:
         # Game Loop - Update
         self.all_sprites.update()
         self.attacks.update()
+        self.healthBar.update(self.player.health)
 
-        self.text = self.font.render(str(self.player.health), True, WHITE)
+        # self.timeText = self.font.render("Time: " + str(math.floor(time.time() - self.timer)), True, WHITE)
+        # Score update
+        self.score = math.floor(time.time() - self.timer)
+
+        if self.score > self.highscore:
+            self.highscore = self.score
+            self.highscoreColour = GREEN
 
         # elapsed time 0.5 s to add new attack
         self.elapsedTime = time.time() - self.startTime
@@ -58,7 +70,7 @@ class Game:
             self.startTime = time.time()
             
             # initialize attack
-            self.newAttack = EnemyAttack(self.bone, random.choice(DIRECTIONS))
+            self.newAttack = EnemyAttack(self.bone)
 
             if self.newAttack.direction == 'goUP':
                 self.newAttack.rect.x = random.randint(HDISTANCE+5, HDISTANCE+GAMEWIDTH)
@@ -103,8 +115,14 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.healthBar.draw(self.screen)
 
-        self.screen.blit(self.text, self.textRect)
+        self.draw_text("Time: " + str(self.score), 25, WHITE, 100, 100)
+        self.draw_text("High score: " + str(self.highscore), 25, self.highscoreColour, 100, 150)
+        
+        # self.screen.blit(self.timeText, self.timeTextRect)
+        # self.screen.blit(self.highTimeText, self.highTimeText)
+
         # *after* drawing everything, flip the display
         pg.display.flip()
 
@@ -114,13 +132,29 @@ class Game:
 
     def show_go_screen(self):
         # game over/continue
-        pass
+        with open(os.path.join(self.dir, "highscore.txt"), 'w') as f:
+            f.write(str(self.highscore))
 
     def load_data(self):
+        # load high score
+        self.dir = os.path.dirname(__file__)
+        with open(os.path.join(self.dir, "highscore.txt"), 'r') as f:
+            try:
+                self.highscore = int(f.read())
+            except:
+                self.highscore = 0
+
         # load pictures
         self.bone = pg.image.load(os.path.join('pictures', 'bone.png'))
         self.heart = pg.image.load(os.path.join('pictures', 'hearts.png'))
         self.border = pg.image.load(os.path.join('pictures', 'border.png'))
+
+    def draw_text(self, text, size, color, x, y):
+        font = pg.font.Font('freesansbold.ttf', size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.screen.blit(text_surface, text_rect)
 
 g = Game()
 g.show_start_screen()

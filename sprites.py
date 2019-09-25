@@ -30,18 +30,36 @@ class Border(pg.sprite.Sprite):
         self.rect.x = HDISTANCE
         self.rect.y = VDISTANCE
 
+class HealthBar(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.left = HDISTANCE + (GAMEWIDTH/2) - 50
+        self.top = VDISTANCE + GAMEWIDTH + 10
+
+        self.rectHP = pg.Rect(self.left, self.top, 100, 20)
+        self.rectLoss = pg.Rect(self.left + 100, self.top, 0, 20)
+        
+    def update(self, playerHealth):
+        self.rectHP.width = playerHealth
+        self.rectLoss.x = self.left + playerHealth
+        self.rectLoss.width = 100 - playerHealth
+
+    def draw(self, screen):
+        pg.draw.rect(screen, GREEN, self.rectHP)
+        pg.draw.rect(screen, RED, self.rectLoss)
+
 class EnemyAttack(pg.sprite.Sprite):
-    def __init__(self, img, direction):
+    def __init__(self, img):
         super().__init__()
 
         self.image = img
-        self.direction = direction
+        self.direction = random.choice(DIRECTIONS)
 
         if self.direction == 'goUP' or self.direction == 'goDOWN':
             self.image = pg.transform.rotate(self.image, 90)
 
         self.rect = self.image.get_rect()
-        self.speed = random.randint(3,7)
+        self.speed = random.randint(1,4)
 
     def update(self):
         if self.direction == 'goUP':
