@@ -26,7 +26,9 @@ class Game:
         self.player = Player(self.heart)
         self.all_sprites.add(self.player)
 
-        self.healthBar = HealthBar()
+        self.healthBar = HealthBar(HDISTANCE + (GAMEWIDTH/2) - 50, VDISTANCE + GAMEWIDTH + 10)
+        self.boss = Boss(self.sans)
+        self.all_sprites.add(self.boss)
 
         self.border = Border(self.border)
         self.all_sprites.add(self.border)
@@ -37,6 +39,7 @@ class Game:
         # self.timeTextRect.center = (100, 100)
 
         self.startTime = time.time()
+        self.startAtkTime = time.time()
 
         self.run()
 
@@ -64,9 +67,21 @@ class Game:
             self.highscore = self.score
             self.highscoreColour = GREEN
 
-        # elapsed time 0.5 s to add new attack
-        self.elapsedTime = time.time() - self.startTime
-        if self.elapsedTime >= random.random()*5.0:
+        # attack boss
+        if (time.time() - self.startAtkTime) >= random.random()*50.0:
+            self.startAtkTime = time.time()
+
+            # initialize attack
+            self.attackBoss = AttackBoss(self.whiteHeart)
+
+            self.all_sprites.add(self.attackBoss)
+
+        if self.attackBoss.rect.colliderect(self.player.rect):
+            self.boss.health -= random.randint(15, 30)
+            self.all_sprites.remove(attack)
+
+        # bone attack
+        if (time.time() - self.startTime) >= random.random()*5.0:
             self.startTime = time.time()
             
             # initialize attack
@@ -148,6 +163,8 @@ class Game:
         self.bone = pg.image.load(os.path.join('pictures', 'bone.png'))
         self.heart = pg.image.load(os.path.join('pictures', 'hearts.png'))
         self.border = pg.image.load(os.path.join('pictures', 'border.png'))
+        self.sans = pg.transform.scale(pg.image.load(os.path.join('pictures', 'sans.png')), (250, 250))
+        self.whiteHeart = pg.image.load(os.path.join('pictures', 'whiteHeart.png'))
 
     def draw_text(self, text, size, color, x, y):
         font = pg.font.Font('freesansbold.ttf', size)

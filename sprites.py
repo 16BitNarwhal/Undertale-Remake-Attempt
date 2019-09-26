@@ -24,25 +24,26 @@ class Player(pg.sprite.Sprite):
 
 class Border(pg.sprite.Sprite):
     def __init__(self, img):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = HDISTANCE
         self.rect.y = VDISTANCE
 
 class HealthBar(pg.sprite.Sprite):
-    def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        self.left = HDISTANCE + (GAMEWIDTH/2) - 50
-        self.top = VDISTANCE + GAMEWIDTH + 10
+    def __init__(self, left, top):
+        super().__init__()
+        
+        self.left = left
+        self.top = top
 
         self.rectHP = pg.Rect(self.left, self.top, 100, 20)
         self.rectLoss = pg.Rect(self.left + 100, self.top, 0, 20)
         
-    def update(self, playerHealth):
-        self.rectHP.width = playerHealth
-        self.rectLoss.x = self.left + playerHealth
-        self.rectLoss.width = 100 - playerHealth
+    def update(self, health):
+        self.rectHP.width = health
+        self.rectLoss.x = self.left + health
+        self.rectLoss.width = 100 - health
 
     def draw(self, screen):
         pg.draw.rect(screen, GREEN, self.rectHP)
@@ -73,3 +74,31 @@ class EnemyAttack(pg.sprite.Sprite):
         
         else:
             self.rect.x -= self.speed
+
+class Boss(pg.sprite.Sprite):
+    def __init__(self, img):
+        super().__init__()
+
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.x = WIDTH - HDISTANCE
+        self.rect.y = VDISTANCE
+    
+    def update(self):
+        # self.health = health
+        pass
+
+class AttackBoss(pg.sprite.Sprite):
+    def __init__(self, img):
+        super().__init__()
+        
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(HDISTANCE, HDISTANCE + GAMEWIDTH)
+        self.rect.y = random.randint(VDISTANCE, VDISTANCE + GAMEHEIGHT)
+
+    def update(self):
+        self.rect.width -= 2
+        self.rect.height -= 2
+        self.rect.x += 1
+        self.rect.y += 1
