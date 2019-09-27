@@ -1,6 +1,7 @@
 import random
 import pygame as pg
 import math
+import time
 from settings import *
 
 class Player(pg.sprite.Sprite):
@@ -84,7 +85,6 @@ class Boss(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH - HDISTANCE
         self.rect.y = VDISTANCE
-        self.health = HEALTH
     
     def update(self):
         pass
@@ -95,11 +95,10 @@ class AttackBoss(pg.sprite.Sprite):
         
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(HDISTANCE, HDISTANCE + GAMEWIDTH)
-        self.rect.y = random.randint(VDISTANCE, VDISTANCE + GAMEHEIGHT)
-        self.size = 25
+        self.rect.x = random.randint(HDISTANCE, HDISTANCE + GAMEWIDTH - 25)
+        self.rect.y = random.randint(VDISTANCE, VDISTANCE + GAMEHEIGHT - 25)
+        self.start = time.time()
+        self.elapsedTime = 3 - math.floor(time.time() - self.start)
 
     def update(self):
-        self.image = pg.transform.scale(self.image, (round(self.size), round(self.size)))
-        self.rect = self.image.get_rect()
-        self.size -= 10.0
+        self.elapsedTime = 3 - math.floor(time.time() - self.start)

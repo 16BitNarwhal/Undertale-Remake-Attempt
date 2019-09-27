@@ -17,6 +17,7 @@ class Game:
         self.timer = time.time()
         self.running = True
         self.highscoreColour = WHITE
+        self.score = 0
 
     def new(self):
         # start a new game
@@ -61,16 +62,8 @@ class Game:
         self.attacks.update()
         self.healthBar.update(self.player.health)
 
-        # self.timeText = self.font.render("Time: " + str(math.floor(time.time() - self.timer)), True, WHITE)
-        # Score update
-        self.score = math.floor(time.time() - self.timer)
-
-        if self.score > self.highscore:
-            self.highscore = self.score
-            self.highscoreColour = GREEN
-
         # attack boss
-        if (time.time() - self.startAtkTime) >= random.random()*50.0:
+        if (time.time() - self.startAtkTime) >= random.random()*500:
             self.startAtkTime = time.time()
 
             # initialize attack
@@ -81,17 +74,18 @@ class Game:
             
         for attack in self.attackingBoss:
             if attack.rect.colliderect(self.player.rect):
-                self.boss.health -= random.randint(15, 30)
+                # Score update
+                self.score += random.randint(5, 20)
+
+                if self.score > self.highscore:
+                    self.highscore = self.score
+                    self.highscoreColour = GREEN
 
                 self.all_sprites.remove(attack)
                 self.attackingBoss.remove(attack)
-
-            if attack.size <= 2:
-                self.all_sprites.remove(attack)
-                self.attackingBoss.remove(attack)
-
+            
         # bone attack
-        if (time.time() - self.startTime) >= random.random()*5.0:
+        if (time.time() - self.startTime) >= random.random()*50:
             self.startTime = time.time()
             
             # initialize attack
@@ -142,8 +136,22 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.healthBar.draw(self.screen)
 
-        self.draw_text("Time: " + str(self.score), 25, WHITE, 100, 100)
+        self.draw_text("Damage: " + str(self.score), 25, WHITE, 100, 100)
         self.draw_text("High score: " + str(self.highscore), 25, self.highscoreColour, 100, 150)
+        
+        for attack in self.attackingBoss:
+            if attack.elapsedTime == 3:
+                self.draw_text(str(attack.elapsedTime), 20, GREEN, attack.rect.x + 11, attack.rect.y + 3)
+
+            elif attack.elapsedTime == 2:
+                self.draw_text(str(attack.elapsedTime), 20, YELLOW, attack.rect.x + 11, attack.rect.y + 3)
+
+            elif attack.elapsedTime == 1:
+                self.draw_text(str(attack.elapsedTime), 20, RED, attack.rect.x + 11, attack.rect.y + 5)
+
+            elif attack.elapsedTime <= 0:
+                self.all_sprites.remove(attack)
+                self.attackingBoss.remove(attack)
         
         # self.screen.blit(self.timeText, self.timeTextRect)
         # self.screen.blit(self.highTimeText, self.highTimeText)
