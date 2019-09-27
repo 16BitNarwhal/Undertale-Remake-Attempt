@@ -1,5 +1,6 @@
 import random
 import pygame as pg
+import math
 from settings import *
 
 class Player(pg.sprite.Sprite):
@@ -83,9 +84,9 @@ class Boss(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH - HDISTANCE
         self.rect.y = VDISTANCE
+        self.health = HEALTH
     
     def update(self):
-        # self.health = health
         pass
 
 class AttackBoss(pg.sprite.Sprite):
@@ -96,9 +97,9 @@ class AttackBoss(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(HDISTANCE, HDISTANCE + GAMEWIDTH)
         self.rect.y = random.randint(VDISTANCE, VDISTANCE + GAMEHEIGHT)
+        self.size = 25
 
     def update(self):
-        self.rect.width -= 2
-        self.rect.height -= 2
-        self.rect.x += 1
-        self.rect.y += 1
+        self.image = pg.transform.scale(self.image, (round(self.size), round(self.size)))
+        self.rect = self.image.get_rect()
+        self.size -= 10.0

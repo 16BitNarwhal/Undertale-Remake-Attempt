@@ -22,11 +22,13 @@ class Game:
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.attacks = pg.sprite.Group()
+        self.attackingBoss = pg.sprite.Group()
         
         self.player = Player(self.heart)
         self.all_sprites.add(self.player)
 
         self.healthBar = HealthBar(HDISTANCE + (GAMEWIDTH/2) - 50, VDISTANCE + GAMEWIDTH + 10)
+
         self.boss = Boss(self.sans)
         self.all_sprites.add(self.boss)
 
@@ -72,13 +74,21 @@ class Game:
             self.startAtkTime = time.time()
 
             # initialize attack
-            self.attackBoss = AttackBoss(self.whiteHeart)
+            self.newAttackBoss = AttackBoss(self.whiteHeart)
 
-            self.all_sprites.add(self.attackBoss)
+            self.all_sprites.add(self.newAttackBoss)
+            self.attackingBoss.add(self.newAttackBoss)
+            
+        for attack in self.attackingBoss:
+            if attack.rect.colliderect(self.player.rect):
+                self.boss.health -= random.randint(15, 30)
 
-        if self.attackBoss.rect.colliderect(self.player.rect):
-            self.boss.health -= random.randint(15, 30)
-            self.all_sprites.remove(attack)
+                self.all_sprites.remove(attack)
+                self.attackingBoss.remove(attack)
+
+            if attack.size <= 2:
+                self.all_sprites.remove(attack)
+                self.attackingBoss.remove(attack)
 
         # bone attack
         if (time.time() - self.startTime) >= random.random()*5.0:
