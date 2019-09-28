@@ -18,6 +18,7 @@ class Game:
         self.running = True
         self.highscoreColour = WHITE
         self.score = 0
+        self.stage = "enemyAttack"
 
     def new(self):
         # start a new game
@@ -35,11 +36,6 @@ class Game:
 
         self.border = Border(self.border)
         self.all_sprites.add(self.border)
-
-        # self.font = pg.font.Font('freesansbold.ttf', 32)
-        # self.timeText = self.font.render("Time: " + str(math.floor(time.time() - self.timer)), True, WHITE)
-        # self.timeTextRect = self.text.get_rect()
-        # self.timeTextRect.center = (100, 100)
 
         self.startTime = time.time()
         self.startAtkTime = time.time()
@@ -62,64 +58,15 @@ class Game:
         self.attacks.update()
         self.healthBar.update(self.player.health)
 
-        # attack boss
-        if (time.time() - self.startAtkTime) >= random.random()*500:
-            self.startAtkTime = time.time()
+        if self.stage == "enemyAttack":
+            self.enemyAttack()
 
-            # initialize attack
-            self.newAttackBoss = AttackBoss(self.whiteHeart)
-
-            self.all_sprites.add(self.newAttackBoss)
-            self.attackingBoss.add(self.newAttackBoss)
-            
-        for attack in self.attackingBoss:
-            if attack.rect.colliderect(self.player.rect):
-                # Score update
-                self.score += random.randint(10, 100)
-
-                if self.score > self.highscore:
-                    self.highscore = self.score
-                    self.highscoreColour = GREEN
-
-                self.all_sprites.remove(attack)
-                self.attackingBoss.remove(attack)
-            
-        # bone attack
-        if (time.time() - self.startTime) >= random.random()*50:
+            if self.startTime - time.time() >= random.randint(6, 15):
+                self.stage == "attackStage"
+        
+        elif self.stage == "attackStage":
+            self.attackStage()
             self.startTime = time.time()
-            
-            # initialize attack
-            self.newAttack = EnemyAttack(self.bone)
-
-            if self.newAttack.direction == 'goUP':
-                self.newAttack.rect.x = random.randint(HDISTANCE+5, HDISTANCE+GAMEWIDTH)
-                self.newAttack.rect.y = HEIGHT
-            elif self.newAttack.direction == 'goDOWN':
-                self.newAttack.rect.x = random.randint(HDISTANCE+5, HDISTANCE+GAMEWIDTH)
-                self.newAttack.rect.y = 0
-            elif self.newAttack.direction == 'goRIGHT':
-                self.newAttack.rect.x = 0
-                self.newAttack.rect.y = random.randint(VDISTANCE+5, VDISTANCE+GAMEHEIGHT)
-            else:
-                self.newAttack.rect.x = WIDTH
-                self.newAttack.rect.y = random.randint(VDISTANCE+5, VDISTANCE+GAMEHEIGHT)
-
-            self.all_sprites.add(self.newAttack)
-            self.attacks.add(self.newAttack)
-
-        for attack in self.attacks:
-            if attack.rect.colliderect(self.player.rect):
-                self.player.health -= random.randint(5, 15)
-                self.attacks.remove(attack)
-                self.all_sprites.remove(attack)
-
-                if self.player.health <= 0:
-                    self.playing = False
-                    self.running = False
-
-            if (attack.direction == 'goLEFT' and attack.rect.x <= 0) or (attack.direction == 'goRIGHT' and attack.rect.x >= WIDTH) or (attack.direction == 'goUP' and attack.rect.y <= 0) or (attack.direction == 'goDOWN' and attack.rect.y >= HEIGHT):
-                self.attacks.remove(attack)
-                self.all_sprites.remove(attack)
 
     def events(self):
         # Game Loop - events
@@ -136,18 +83,18 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.healthBar.draw(self.screen)
 
-        self.draw_text("Damage: " + str(self.score), 25, WHITE, 100, 100)
-        self.draw_text("High score: " + str(self.highscore), 25, self.highscoreColour, 100, 150)
+        self.draw_text("Score: " + str(self.score), 35, WHITE, 150, 75)
+        self.draw_text("High score: " + str(self.highscore), 35, self.highscoreColour, 150, 125)
         
         for attack in self.attackingBoss:
             if attack.elapsedTime == 3:
-                self.draw_text(str(attack.elapsedTime), 20, GREEN, attack.rect.x + 11, attack.rect.y + 3)
+                self.draw_text(str(attack.elapsedTime), 15, GREEN, attack.rect.x + 11, attack.rect.y + 3)
 
             elif attack.elapsedTime == 2:
-                self.draw_text(str(attack.elapsedTime), 20, YELLOW, attack.rect.x + 11, attack.rect.y + 3)
+                self.draw_text(str(attack.elapsedTime), 15, YELLOW, attack.rect.x + 11, attack.rect.y + 3)
 
             elif attack.elapsedTime == 1:
-                self.draw_text(str(attack.elapsedTime), 20, RED, attack.rect.x + 11, attack.rect.y + 5)
+                self.draw_text(str(attack.elapsedTime), 15, RED, attack.rect.x + 11, attack.rect.y + 5)
 
             elif attack.elapsedTime <= 0:
                 self.all_sprites.remove(attack)
@@ -185,11 +132,75 @@ class Game:
         self.whiteHeart = pg.image.load(os.path.join('pictures', 'whiteHeart.png'))
 
     def draw_text(self, text, size, color, x, y):
-        font = pg.font.Font('freesansbold.ttf', size)
+        font = pg.font.Font('C:\WINDOWS\FONTS\IMPACT.TTF', size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
+
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
+
+    def enemyAttack(self):
+        # scoring
+        if (time.time() - self.startAtkTime) >= random.random()*500:
+            self.startAtkTime = time.time()
+
+            # initialize attack
+            self.newAttackBoss = AttackBoss(self.whiteHeart)
+
+            self.all_sprites.add(self.newAttackBoss)
+            self.attackingBoss.add(self.newAttackBoss)
+            
+        for attack in self.attackingBoss:
+            if attack.rect.colliderect(self.player.rect):
+                # Score update
+                self.score += random.randint(5, 25)
+
+                if self.score > self.highscore:
+                    self.highscore = self.score
+                    self.highscoreColour = GREEN
+
+                self.all_sprites.remove(attack)
+                self.attackingBoss.remove(attack)
+            
+        # bone attack
+        if (time.time() - self.startTime) >= random.random()*50:
+            
+            # initialize attack
+            self.newAttack = EnemyAttack(self.bone)
+
+            if self.newAttack.direction == 'goUP':
+                self.newAttack.rect.x = random.randint(HDISTANCE+5, HDISTANCE+GAMEWIDTH)
+                self.newAttack.rect.y = HEIGHT
+            elif self.newAttack.direction == 'goDOWN':
+                self.newAttack.rect.x = random.randint(HDISTANCE+5, HDISTANCE+GAMEWIDTH)
+                self.newAttack.rect.y = 0
+            elif self.newAttack.direction == 'goRIGHT':
+                self.newAttack.rect.x = 0
+                self.newAttack.rect.y = random.randint(VDISTANCE+5, VDISTANCE+GAMEHEIGHT)
+            else:
+                self.newAttack.rect.x = WIDTH
+                self.newAttack.rect.y = random.randint(VDISTANCE+5, VDISTANCE+GAMEHEIGHT)
+
+            self.all_sprites.add(self.newAttack)
+            self.attacks.add(self.newAttack)
+
+        for attack in self.attacks:
+            if attack.rect.colliderect(self.player.rect):
+                self.player.health -= random.randint(5, 15)
+                self.attacks.remove(attack)
+                self.all_sprites.remove(attack)
+
+                if self.player.health <= 0:
+                    self.playing = False
+                    self.running = False
+
+            if (attack.direction == 'goLEFT' and attack.rect.x <= 0) or (attack.direction == 'goRIGHT' and attack.rect.x >= WIDTH) or (attack.direction == 'goUP' and attack.rect.y <= 0) or (attack.direction == 'goDOWN' and attack.rect.y >= HEIGHT):
+                self.attacks.remove(attack)
+                self.all_sprites.remove(attack)
+
+    def attackStage(self):
+        # create attack button
+        
 
 g = Game()
 g.show_start_screen()

@@ -83,8 +83,8 @@ class Boss(pg.sprite.Sprite):
 
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH - HDISTANCE
-        self.rect.y = VDISTANCE
+        self.rect.x = WIDTH - HDISTANCE + 50
+        self.rect.y = 10
     
     def update(self):
         pass
@@ -102,3 +102,17 @@ class AttackBoss(pg.sprite.Sprite):
 
     def update(self):
         self.elapsedTime = 3 - math.floor(time.time() - self.start)
+
+class Button(pg.sprite.Sprite):
+    def __init___(self, x, y):
+        super().__init__()
+
+        self.width = 100
+        self.height = 50
+        self.rect = pg.surface((self.width, self.height))
+
+        self.rect.x = x
+        self.rect.y = y
+    
+    def update(self):
+        if pg.mouse.get_pressed() and pg.mouse.get_pos().x >= self.rect.x and pg.mouse.get_pos().y >= self.rect.y and pg.mouse.get_pos <= self.rect.x+self.width and pg.mouse.get_pos().y <= self.rect.y+self.height)
