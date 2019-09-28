@@ -49,9 +49,9 @@ class Game:
     def run(self):
         # Game Loop
         self.playing = True
+        self.load_data()
         while self.playing:
             self.clock.tick(FPS)
-            self.load_data()
             self.events()
             self.update()
             self.draw()
@@ -75,7 +75,7 @@ class Game:
         for attack in self.attackingBoss:
             if attack.rect.colliderect(self.player.rect):
                 # Score update
-                self.score += random.randint(5, 20)
+                self.score += random.randint(10, 100)
 
                 if self.score > self.highscore:
                     self.highscore = self.score

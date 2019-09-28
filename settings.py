@@ -22,5 +22,3 @@ ORANGE = ()
 # player
 PLAYERSPEED = 5
 HEALTH = 100
-
-# enemy
