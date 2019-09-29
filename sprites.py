@@ -5,8 +5,9 @@ import time
 from settings import *
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, game, img):
         pg.sprite.Sprite.__init__(self)
+        self.game = game
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = HDISTANCE + (GAMEWIDTH/2)
@@ -25,36 +26,37 @@ class Player(pg.sprite.Sprite):
             self.rect.y += PLAYERSPEED
 
 class Border(pg.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, game, img):
         super().__init__()
+        self.game = game
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = HDISTANCE
         self.rect.y = VDISTANCE
 
 class HealthBar(pg.sprite.Sprite):
-    def __init__(self, left, top):
+    def __init__(self, game, left, top):
         super().__init__()
-        
+        self.game = game
         self.left = left
         self.top = top
 
         self.rectHP = pg.Rect(self.left, self.top, 100, 20)
         self.rectLoss = pg.Rect(self.left + 100, self.top, 0, 20)
         
-    def update(self, health):
-        self.rectHP.width = health
-        self.rectLoss.x = self.left + health
-        self.rectLoss.width = 100 - health
+    def update(self):
+        self.rectHP.width = self.game.player.health
+        self.rectLoss.x = self.left + self.game.player.health
+        self.rectLoss.width = 100 - self.game.player.health
 
     def draw(self, screen):
         pg.draw.rect(screen, GREEN, self.rectHP)
         pg.draw.rect(screen, RED, self.rectLoss)
 
 class EnemyAttack(pg.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, game, img):
         super().__init__()
-
+        self.game = game
         self.image = img
         self.direction = random.choice(DIRECTIONS)
 
@@ -78,9 +80,9 @@ class EnemyAttack(pg.sprite.Sprite):
             self.rect.x -= self.speed
 
 class Boss(pg.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, game, img):
         super().__init__()
-
+        self.game = game
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH - HDISTANCE + 50
@@ -90,9 +92,9 @@ class Boss(pg.sprite.Sprite):
         pass
 
 class AttackBoss(pg.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, game, img):
         super().__init__()
-        
+        self.game = game
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(HDISTANCE, HDISTANCE + GAMEWIDTH - 25)
@@ -103,16 +105,19 @@ class AttackBoss(pg.sprite.Sprite):
     def update(self):
         self.elapsedTime = 3 - math.floor(time.time() - self.start)
 
-class Button(pg.sprite.Sprite):
-    def __init___(self, x, y):
-        super().__init__()
-
+class MakeButton(pg.sprite.Sprite):
+    def __init___(self, game, x, y):
+        super(buttons).__init__()
+        self.game = game
         self.width = 100
         self.height = 50
         self.rect = pg.surface((self.width, self.height))
 
         self.rect.x = x
         self.rect.y = y
+
+        self.game.buttons.add(self)
     
     def update(self):
-        if pg.mouse.get_pressed() and pg.mouse.get_pos().x >= self.rect.x and pg.mouse.get_pos().y >= self.rect.y and pg.mouse.get_pos <= self.rect.x+self.width and pg.mouse.get_pos().y <= self.rect.y+self.height)
+        if pg.mouse.get_pressed() and pg.mouse.get_pos().x >= self.rect.x and pg.mouse.get_pos().y >= self.rect.y and pg.mouse.get_pos <= self.rect.x + self.width and pg.mouse.get_pos().y <= self.rect.y + self.height:
+           print("This button pressed")

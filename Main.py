@@ -18,23 +18,25 @@ class Game:
         self.running = True
         self.highscoreColour = WHITE
         self.score = 0
-        self.stage = "enemyAttack"
+        self.stage = "chooseStage"
 
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.attacks = pg.sprite.Group()
         self.attackingBoss = pg.sprite.Group()
+        self.theButtons = pg.sprite.Group()
         
-        self.player = Player(self.heart)
+        self.player = Player(self, self.heart)
         self.all_sprites.add(self.player)
 
-        self.healthBar = HealthBar(HDISTANCE + (GAMEWIDTH/2) - 50, VDISTANCE + GAMEWIDTH + 10)
+        self.healthBar = HealthBar(self, HDISTANCE + (GAMEWIDTH/2) - 50, VDISTANCE + GAMEWIDTH + 10)
+        self.all_sprites.add(self.healthBar)
 
-        self.boss = Boss(self.sans)
+        self.boss = Boss(self, self.sans)
         self.all_sprites.add(self.boss)
 
-        self.border = Border(self.border)
+        self.border = Border(self, self.border)
         self.all_sprites.add(self.border)
 
         self.startTime = time.time()
@@ -56,14 +58,17 @@ class Game:
         # Game Loop - Update
         self.all_sprites.update()
         self.attacks.update()
-        self.healthBar.update(self.player.health)
 
-        if self.stage == "enemyAttack":
+        if self.stage == "chooseStage":
+            self.chooseStage()
+            self.startTime = time.time()
+
+        elif self.stage == "enemyAttack":
             self.enemyAttack()
 
             if self.startTime - time.time() >= random.randint(6, 15):
                 self.stage == "attackStage"
-        
+
         elif self.stage == "attackStage":
             self.attackStage()
             self.startTime = time.time()
@@ -81,7 +86,6 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
-        self.healthBar.draw(self.screen)
 
         self.draw_text("Score: " + str(self.score), 35, WHITE, 150, 75)
         self.draw_text("High score: " + str(self.highscore), 35, self.highscoreColour, 150, 125)
@@ -145,7 +149,7 @@ class Game:
             self.startAtkTime = time.time()
 
             # initialize attack
-            self.newAttackBoss = AttackBoss(self.whiteHeart)
+            self.newAttackBoss = AttackBoss(self, self.whiteHeart)
 
             self.all_sprites.add(self.newAttackBoss)
             self.attackingBoss.add(self.newAttackBoss)
@@ -163,10 +167,11 @@ class Game:
                 self.attackingBoss.remove(attack)
             
         # bone attack
-        if (time.time() - self.startTime) >= random.random()*50:
+        if (time.time() - self.startTime) >= random.randint(1, 10)/10:
+            self.startTime = time.time()
             
             # initialize attack
-            self.newAttack = EnemyAttack(self.bone)
+            self.newAttack = EnemyAttack(self, self.bone)
 
             if self.newAttack.direction == 'goUP':
                 self.newAttack.rect.x = random.randint(HDISTANCE+5, HDISTANCE+GAMEWIDTH)
@@ -199,8 +204,17 @@ class Game:
                 self.all_sprites.remove(attack)
 
     def attackStage(self):
-        # create attack button
-        
+        pass
+
+    def chooseStage(self):
+        # create buttons
+        self.atkBtn = MakeButton(self, WIDTH/2 - 100, HEIGHT/2 + 100)
+        self.healBtn = MakeButton(self, WIDTH/2 + 100, HEIGHT/2 + 100)
+
+        self.all_sprites.add(self.atkBtn)
+        self.all_sprites.add(self.healBtn)
+        self.theButtons.add(self.atkBtn)
+        self.theButtons.add(self.healBtn)
 
 g = Game()
 g.show_start_screen()
