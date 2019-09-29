@@ -25,7 +25,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.attacks = pg.sprite.Group()
         self.attackingBoss = pg.sprite.Group()
-        self.theButtons = pg.sprite.Group()
+        self.buttons = pg.sprite.Group()
         
         self.player = Player(self, self.heart)
         self.all_sprites.add(self.player)
@@ -86,6 +86,7 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.buttons.draw(self.screen)
 
         self.draw_text("Score: " + str(self.score), 35, WHITE, 150, 75)
         self.draw_text("High score: " + str(self.highscore), 35, self.highscoreColour, 150, 125)
@@ -208,13 +209,8 @@ class Game:
 
     def chooseStage(self):
         # create buttons
-        self.atkBtn = MakeButton(self, WIDTH/2 - 100, HEIGHT/2 + 100)
-        self.healBtn = MakeButton(self, WIDTH/2 + 100, HEIGHT/2 + 100)
-
-        self.all_sprites.add(self.atkBtn)
-        self.all_sprites.add(self.healBtn)
-        self.theButtons.add(self.atkBtn)
-        self.theButtons.add(self.healBtn)
+        self.atkBtn = Button(self, WIDTH/2 - 100, HEIGHT/2 + 100)
+        self.healBtn = Button(self, WIDTH/2 + 100, HEIGHT/2 + 100)
 
 g = Game()
 g.show_start_screen()

@@ -6,7 +6,7 @@ from settings import *
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game, img):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
         self.game = game
         self.image = img
         self.rect = self.image.get_rect()
@@ -105,19 +105,18 @@ class AttackBoss(pg.sprite.Sprite):
     def update(self):
         self.elapsedTime = 3 - math.floor(time.time() - self.start)
 
-class MakeButton(pg.sprite.Sprite):
-    def __init___(self, game, x, y):
-        super(buttons).__init__()
+class Button(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        super().__init__()
         self.game = game
         self.width = 100
         self.height = 50
-        self.rect = pg.surface((self.width, self.height))
 
-        self.rect.x = x
-        self.rect.y = y
+        self.rect = pg.Rect(x, y, self.width, self.height)
 
+        self.game.all_sprites.add(self)
         self.game.buttons.add(self)
     
     def update(self):
         if pg.mouse.get_pressed() and pg.mouse.get_pos().x >= self.rect.x and pg.mouse.get_pos().y >= self.rect.y and pg.mouse.get_pos <= self.rect.x + self.width and pg.mouse.get_pos().y <= self.rect.y + self.height:
-           print("This button pressed")
+            print("This button pressed")
