@@ -4,6 +4,22 @@ import math
 import time
 from settings import *
 
+class ButtonGroup(pg.sprite.Group):
+
+    def handle_event(self, event):
+        for spr in self.sprites():
+            # Check if the sprite has a `handle_event` method.
+            if hasattr(spr, 'handle_event'):
+               spr.handle_event(event)
+
+    def draw(self, surface):
+        sprites = self.sprites()
+        surface_blit = surface.blit
+        for spr in sprites:
+            spr.game.draw_text(spr.text, 25, WHITE, spr.rect.x, spr.rect.y)
+            pg.draw.rect(surface, ORANGE, (spr.rect.topleft, (spr.width, spr.height)))
+        self.lostsprites = []
+
 class Player(pg.sprite.Sprite):
     def __init__(self, game, img):
         super().__init__()
@@ -13,6 +29,8 @@ class Player(pg.sprite.Sprite):
         self.rect.x = HDISTANCE + (GAMEWIDTH/2)
         self.rect.y = VDISTANCE + (GAMEHEIGHT/2)
         self.health = HEALTH
+
+        self.game.all_sprites.add(self)
         
     def update(self):
         keys = pg.key.get_pressed()
@@ -33,6 +51,8 @@ class Border(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = HDISTANCE
         self.rect.y = VDISTANCE
+
+        self.game.all_sprites.add(self)
 
 class HealthBar(pg.sprite.Sprite):
     def __init__(self, game, left, top):
@@ -66,6 +86,9 @@ class EnemyAttack(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.speed = random.randint(1,4)
 
+        self.game.all_sprites.add(self)
+        self.game.attacks.add(self)
+
     def update(self):
         if self.direction == 'goUP':
             self.rect.y -= self.speed
@@ -87,6 +110,8 @@ class Boss(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH - HDISTANCE + 50
         self.rect.y = 10
+
+        self.game.all_sprites.add(self)
     
     def update(self):
         pass
@@ -102,19 +127,20 @@ class AttackBoss(pg.sprite.Sprite):
         self.start = time.time()
         self.elapsedTime = 3 - math.floor(time.time() - self.start)
 
+        self.game.all_sprites.add(self)
+
     def update(self):
         self.elapsedTime = 3 - math.floor(time.time() - self.start)
 
 class Button(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, text):
         super().__init__()
         self.game = game
-        self.width = 100
-        self.height = 50
+        self.width = 250
+        self.height = 100
 
         self.rect = pg.Rect(x, y, self.width, self.height)
 
-        self.game.all_sprites.add(self)
         self.game.buttons.add(self)
     
     def update(self):
