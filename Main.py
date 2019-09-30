@@ -25,7 +25,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.attacks = pg.sprite.Group()
         self.attackingBoss = pg.sprite.Group()
-        self.buttons = ButtonGroup()
+        self.buttons = ButtonGroup(self)
         
         self.player = Player(self, self.heart)
         self.healthBar = HealthBar(self, HDISTANCE + (GAMEWIDTH/2) - 50, VDISTANCE + GAMEWIDTH + 10)
@@ -81,7 +81,12 @@ class Game:
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         self.healthBar.draw(self.screen)
-        self.buttons.draw(self.screen)
+        self.buttons.draw(self.screen)        
+        '''for button in self.buttons:
+            pg.draw.rect(self.screen, ORANGE, (button.rect.topleft, (button.width, button.height)))
+            pg.draw.rect(self.screen, BLACK, ((button.rect.x+5, button.rect.y+5), (button.width-10, button.height-10)))
+            pg.draw.rect(self.screen, ORANGE, ((button.rect.x+10, button.rect.y+10), (button.width-20, button.height-20)))
+            self.draw_text(button.text, 60, WHITE, button.rect.x+120, button.rect.y+10)'''
 
         self.draw_text("Score: " + str(self.score), 35, WHITE, 150, 75)
         self.draw_text("High score: " + str(self.highscore), 35, self.highscoreColour, 150, 125)

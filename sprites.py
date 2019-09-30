@@ -6,18 +6,19 @@ from settings import *
 
 class ButtonGroup(pg.sprite.Group):
 
-    def handle_event(self, event):
-        for spr in self.sprites():
-            # Check if the sprite has a `handle_event` method.
-            if hasattr(spr, 'handle_event'):
-               spr.handle_event(event)
+    def __init__(self, game):
+        super().__init__()
+        self.game = game
 
     def draw(self, surface):
         sprites = self.sprites()
         surface_blit = surface.blit
         for spr in sprites:
-            spr.game.draw_text(spr.text, 25, WHITE, spr.rect.x, spr.rect.y)
             pg.draw.rect(surface, ORANGE, (spr.rect.topleft, (spr.width, spr.height)))
+            pg.draw.rect(surface, BLACK, ((spr.rect.x+5, spr.rect.y+5), (spr.width-10, spr.height-10)))
+            pg.draw.rect(surface, ORANGE, ((spr.rect.x+10, spr.rect.y+10), (spr.width-20, spr.height-20)))
+            self.game.draw_text(spr.text, 60, WHITE, spr.rect.x+120, spr.rect.y+10)
+            
         self.lostsprites = []
 
 class Player(pg.sprite.Sprite):
@@ -138,6 +139,7 @@ class Button(pg.sprite.Sprite):
         self.game = game
         self.width = 250
         self.height = 100
+        self.text = text
 
         self.rect = pg.Rect(x, y, self.width, self.height)
 
