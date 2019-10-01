@@ -4,7 +4,7 @@ import math
 import time
 from settings import *
 
-class ButtonGroup(pg.sprite.Group):
+'''class ButtonGroup(pg.sprite.Group):
 
     def __init__(self, game):
         super().__init__()
@@ -19,7 +19,7 @@ class ButtonGroup(pg.sprite.Group):
             pg.draw.rect(surface, ORANGE, ((spr.rect.x+10, spr.rect.y+10), (spr.width-20, spr.height-20)))
             self.game.draw_text(spr.text, 60, WHITE, spr.rect.x+120, spr.rect.y+10)
             
-        self.lostsprites = []
+        self.lostsprites = []'''
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game, img):
@@ -134,17 +134,23 @@ class AttackBoss(pg.sprite.Sprite):
         self.elapsedTime = 3 - math.floor(time.time() - self.start)
 
 class Button(pg.sprite.Sprite):
-    def __init__(self, game, x, y, text):
+    def __init__(self, game, x, y, img):
         super().__init__()
         self.game = game
-        self.width = 250
-        self.height = 100
-        self.text = text
+        self.image = img
+        self.rect = self.image.get_rect()
 
-        self.rect = pg.Rect(x, y, self.width, self.height)
+        self.rect.x = x
+        self.rect.y = y
 
-        self.game.buttons.add(self)
+        self.click = pg.mouse.get_pressed()
+        self.mouse = pg.mouse.get_pos()
+
+        self.game.all_sprites.add(self)
     
     def update(self):
-        if pg.mouse.get_pressed() and pg.mouse.get_pos().x >= self.rect.x and pg.mouse.get_pos().y >= self.rect.y and pg.mouse.get_pos <= self.rect.x + self.width and pg.mouse.get_pos().y <= self.rect.y + self.height:
-            print("This button pressed")
+        if (self.click[0] == 1) and (self.rect.x + self.rect.width >= self.mouse[0] >= self.rect.x) and (self.rect.y + self.rect.width >= self.mouse[1] >= self.rect.y):
+            self.click = pg.mouse.get_pressed()
+            self.mouse = pg.mouse.get_pos()
+            self.game.all_sprites.remove(self.game.atkBtn)
+            self.game.all_sprites.remove(self.game.healBtn)
